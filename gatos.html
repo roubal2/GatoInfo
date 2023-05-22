@@ -29,8 +29,114 @@
                 <a class="nav-link" href="about_us.html">About Us</a>
               </li>
             </ul>
+            <button class="btn btn-primary" id="refresh-button" onclick="refreshCards()">Refresh</button>
           </div>
         </div>
       </nav>
+
+      <div id="card-container" class="container">
+        <div class="row" id="card-row"></div>
+      </div>
 </body>
+<script>
+function refreshCards() {
+  const cardRow = document.getElementById('card-row');
+  cardRow.innerHTML = '';
+
+  fetch('https://api.thecatapi.com/v1/breeds')
+  .then(response => response.json())
+  .then(data => {
+    const randomBreeds = getRandomBreeds(data, 8); 
+    const cardRow = document.getElementById('card-row');
+    let cardCount = 0;
+    let currentRow;
+
+    randomBreeds.forEach(breed => {
+      fetch(`https://api.thecatapi.com/v1/images/search?breed_ids=${breed.id}`)
+        .then(response => response.json())
+        .then(images => {
+          if (images.length > 0) {
+            const catInfo = {
+              name: breed.name,
+              description: breed.description,
+              imageUrl: images[0].url,
+              origin: breed.origin,
+              temperament: breed.temperament,
+              lifeSpan: breed.life_span
+            };
+            
+            if (cardCount % 4 === 0) {
+              currentRow = document.createElement('div');
+              currentRow.classList.add('row');
+              cardRow.appendChild(currentRow);
+            }
+
+            const col = document.createElement('div');
+            col.classList.add('col-lg-3', 'col-md-6', 'col-12');
+            const card = createCatCard(catInfo);
+            col.appendChild(card);
+            currentRow.appendChild(col);
+
+            cardCount++;
+          }
+        })
+        .catch(error => {
+          console.log('Chyba při získávání informací o kočce:', error);
+        });
+    });
+  })
+  .catch(error => {
+    console.log('Chyba při získávání seznamu plemen koček:', error);
+  });
+}
+
+function getRandomBreeds(breeds, count) {
+  const shuffledBreeds = breeds.sort(() => 0.5 - Math.random());
+  return shuffledBreeds.slice(0, count);
+}
+
+function createCatCard(catInfo) {
+  const card = document.createElement('div');
+  card.classList.add('card');
+
+  const image = document.createElement('img');
+  image.src = catInfo.imageUrl;
+  image.alt = catInfo.name;
+  image.classList.add('card-img-top');
+
+  const cardBody = document.createElement('div');
+  cardBody.classList.add('card-body');
+
+  const title = document.createElement('h5');
+  title.classList.add('card-title');
+  title.textContent = catInfo.name;
+
+  const description = document.createElement('p');
+  description.classList.add('card-text');
+  description.textContent = catInfo.description;
+
+  const origin = document.createElement('p');
+  origin.classList.add('card-text');
+  origin.textContent = 'Origin: ' + catInfo.origin;
+
+  const temperament = document.createElement('p');
+  temperament.classList.add('card-text');
+  temperament.textContent = 'Temperament: ' + catInfo.temperament;
+
+  const lifeSpan = document.createElement('p');
+  lifeSpan.classList.add('card-text');
+  lifeSpan.textContent = 'Life Span: ' + catInfo.lifeSpan;
+
+  cardBody.appendChild(title);
+  cardBody.appendChild(description);
+  cardBody.appendChild(origin);
+  cardBody.appendChild(temperament);
+  cardBody.appendChild(lifeSpan);
+
+  card.appendChild(image);
+  card.appendChild(cardBody);
+
+  return card;
+}
+</script>
 </html>
