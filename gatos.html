@@ -50,17 +50,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   refreshCards();
-});
 
-function addToCart(imageUrl) {
-    // Přidání kočky do košíku (localStorage)
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    cart.push(imageUrl);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Kočka byla přidána do košíku.');
-  }
-
-function refreshCards() {
+  function refreshCards() {
   const cardRow = document.getElementById('card-row');
   cardRow.innerHTML = '';
 
@@ -110,6 +101,15 @@ function refreshCards() {
     console.log('Chyba při získávání seznamu plemen koček:', error);
   });
 }
+});
+
+function addToCart(imageUrl) {
+    // Přidání kočky do košíku (localStorage)
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push(imageUrl);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Kočka byla přidána do košíku.');
+  }
 
 function getRandomBreeds(breeds, count) {
   const shuffledBreeds = breeds.sort(() => 0.5 - Math.random());
