@@ -52,6 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
   refreshCards();
 });
 
+function addToCart(imageUrl) {
+    // Přidání kočky do košíku (localStorage)
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push(imageUrl);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    alert('Kočka byla přidána do košíku.');
+  }
+
 function refreshCards() {
   const cardRow = document.getElementById('card-row');
   cardRow.innerHTML = '';
@@ -124,6 +132,7 @@ function createCatCard(catInfo) {
   const title = document.createElement('h5');
   title.classList.add('card-title');
   title.textContent = catInfo.name;
+  title.setAttribute('title', catInfo.id);
 
   const description = document.createElement('p');
   description.classList.add('card-text');
@@ -144,12 +153,7 @@ function createCatCard(catInfo) {
   const selectButton = document.createElement('button');
   selectButton.classList.add('btn', 'btn-primary');
   selectButton.textContent = 'Vybrat';
-  selectButton.addEventListener('click', () => {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    cart.push(catInfo);
-    localStorage.setItem('cart', JSON.stringify(cart));
-    alert('Kočka byla přidána do košíku!');
-  });
+  selectButton.addEventListener('click', () => addToCart(catInfo.imageUrl));
 
   cardBody.appendChild(title);
   cardBody.appendChild(description);

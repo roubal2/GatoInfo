@@ -47,6 +47,7 @@
     function renderCartItems() {
         const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
         const cartItemsContainer = document.getElementById('cart-items');
+        const itemCount = {};
 
         cartItemsContainer.innerHTML = '';
 
@@ -56,9 +57,18 @@
             cartItemsContainer.appendChild(emptyMessage);
         } else {
             cartItems.forEach(itemId => {
+                if (itemCount[itemId]) {
+                    itemCount[itemId]++;
+                } else {
+                    itemCount[itemId] = 1;
+                }
+            });
+
+            Object.keys(itemCount).forEach(itemId => {
                 const item = document.createElement('li');
-                item.textContent = 'Kočka s ID ${itemId}';
-                cartItemsContainer.appendChild(listItem);
+                const count = itemCount[itemId];
+                item.textContent = `Kočka s ID ${itemId} (${count}x)`;
+                cartItemsContainer.appendChild(item);
             });
         }
     }
